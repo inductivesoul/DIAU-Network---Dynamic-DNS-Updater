@@ -1,7 +1,6 @@
 DIAU Namecheap Dynamic DNS Updater (v1.0.0 Stable)
 
 A robust, fault-tolerant Windows utility designed to keep your Namecheap Dynamic DNS records perfectly synced with your public IP address. Designed for reliability, this app functions as a "set-it-and-forget-it" background service with an ultra-lightweight footprint.
-
 🚀 Key Features
 🧠 Smart Update Logic
 
@@ -55,32 +54,39 @@ A robust, fault-tolerant Windows utility designed to keep your Namecheap Dynamic
 
 📥 Installation & Setup
 
-    Clone the Repo:
-    Bash
+    1. Download: Download the latest Release package from the GitHub repository.
+        https://github.com/inductivesoul/DIAU-Network---Dynamic-DNS-Updater/releases
+            Dependency Note: .NET Desktop Runtime 10.0 is required to run this application.
+                https://builds.dotnet.microsoft.com/dotnet/WindowsDesktop/10.0.5/windowsdesktop-runtime-10.0.5-win-x64.exe
 
-    git clone https://github.com/inductivesoul/DIAU-Network---Dynamic-DNS-Updater
+    2. Extract: Unzip the files to the directory you wish to run it in.
 
-    Configure Records:
+    3. Launch: Run the app: DIAU Network - Dynamic DNS Updater.exe.
 
-        Open the app and enter your Host (e.g., @, *, or valheim), Domain, and the Dynamic DNS Password provided in your Namecheap dashboard.
+    4. Configure Records: Open the app and enter your Host (e.g., @, *, or valheim), Domain, and the Dynamic DNS Password provided in your Namecheap dashboard.
 
-    Set & Forget:
+    5. Set & Forget:
 
-        Check "Enable periodic updates".
+        Check "Enable periodic updates."
 
         Check "Run at Startup" to ensure continuous protection after a reboot.
 
         Close the window to let it run silently in the system tray.
 
-⚠️ Important Security Note
 
-The app generates a file named diau_ddns_config.json to store your records. Do not share this file or push it to public repositories, as it contains your Dynamic DNS passwords.
+> [!IMPORTANT]
+> **Important Security Note**
+> The app generates configuration files to store your records. Do not share these files or push them to public repositories, as they contain your Dynamic DNS passwords.
+> 
+> It is highly recommended to add these to your `.gitignore`:
+> ```text
+> diau_ddns_config.json
+> diau_ui_config.json
+> ```
 
-It is highly recommended to add this to your .gitignore:
-Plaintext
-
-# Local configuration containing sensitive passwords
-diau_ddns_config.json
+> [!CAUTION]
+> **Protect Your Configuration**
+> Ensure you protect and do not share the `diau_ddns_config.json` file from your install directory. This file contains your DNS update passwords. Anyone who gets hold of this file can use it to maliciously change your DNS records.
 
 📄 License
 
