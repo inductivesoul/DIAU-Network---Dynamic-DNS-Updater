@@ -49,7 +49,7 @@ A robust, fault-tolerant Windows utility designed to keep your Namecheap Dynamic
     Clone the Repo:
     Bash
 
-    git clone https://github.com/YourUsername/DIAU-DDNS-Updater.git
+    git clone https://github.com/inductivesoul/DIAU-Network---Dynamic-DNS-Updater
 
     Configure Records:
 
@@ -66,6 +66,7 @@ A robust, fault-tolerant Windows utility designed to keep your Namecheap Dynamic
 ⚠️ Important Security Note
 
 The app generates a file named diau_ddns_config.json to store your records. Do not share this file or push it to public repositories, as it contains your Dynamic DNS passwords. It is recommended to add this file to your .gitignore.
+
 📄 License
 
 Distributed under the MIT License. See LICENSE for more information.
