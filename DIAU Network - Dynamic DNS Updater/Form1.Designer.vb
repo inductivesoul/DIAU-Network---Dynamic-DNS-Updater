@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
-Partial Class Form1
+Partial Class Main_Form1
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -22,14 +22,18 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Main_Form1))
         SuspendLayout()
         ' 
-        ' Form1
+        ' Main_Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(800, 450)
-        Name = "Form1"
+        BackColor = Color.Black
+        ClientSize = New Size(1008, 621)
+        ForeColor = Color.White
+        Icon = CType(resources.GetObject("$this.Icon"), Icon)
+        Name = "Main_Form1"
         Text = "DIAU Network - Dynamic DNS Updater"
         ResumeLayout(False)
     End Sub
