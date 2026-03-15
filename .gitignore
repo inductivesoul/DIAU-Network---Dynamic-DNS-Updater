@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# DIAU DDNS Specific Configs
+diau_ddns_config.json
+diau_ui_config.json
