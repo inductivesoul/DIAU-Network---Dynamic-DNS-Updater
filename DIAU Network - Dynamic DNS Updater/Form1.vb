@@ -85,67 +85,147 @@ Public Class Main_Form1
         Dim btnBack As Color = Color.FromArgb(45, 45, 48)
         Dim btnFore As Color = Color.White
 
-        rtbLog = New RichTextBox() With {.Name = "rtbLog", .Dock = DockStyle.Right, .Width = 400, .ReadOnly = True, .Font = New Font("Consolas", 10.0F), .BorderStyle = BorderStyle.None, .BackColor = Color.Black, .ForeColor = Color.Lime}
+        rtbLog = New RichTextBox() With {.Name = "rtbLog", .Dock = DockStyle.Right, .Width = 520, .MinimumSize = New Size(360, 200), .ReadOnly = True, .Font = New Font("Consolas", 10.0F), .BorderStyle = BorderStyle.None, .BackColor = Color.Black, .ForeColor = Color.Lime}
         Dim pnlLeft As New Panel() With {.Name = "pnlLeft", .Dock = DockStyle.Fill, .Padding = New Padding(24), .AutoScroll = True}
 
-        Dim lblTitle As New Label() With {.Name = "lblTitle", .Text = "Namecheap Dynamic DNS", .Font = New Font("Segoe UI Semibold", 14.0F), .AutoSize = True, .Location = New Point(20, 20)}
+        Dim lblTitle As New Label() With {.Name = "lblTitle", .Text = "Namecheap Dynamic IPv4 DNS Updater", .Font = New Font("Segoe UI Semibold", 14.0F), .AutoSize = True, .Location = New Point(20, 20)}
 
         ' Row 1: The Settings Row
-        chkEnableTimer = New CheckBox() With {.Text = "Enable periodic updates", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True, .Location = New Point(20, 60)}
+        ' Top-row controls: use a FlowLayoutPanel to automatically arrange and prevent overlap
+        chkEnableTimer = New CheckBox() With {.Text = "Enable periodic updates", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True}
         AddHandler chkEnableTimer.CheckedChanged, AddressOf ChkEnableTimer_CheckedChanged
 
-        numInterval = New NumericUpDown() With {.Minimum = 5, .Maximum = 1440, .Value = 30, .Width = 60, .Font = primaryFont, .Location = New Point(210, 58)}
+        numInterval = New NumericUpDown() With {.Minimum = 5, .Maximum = 1440, .Value = 30, .Width = 60, .Font = primaryFont}
         AddHandler numInterval.ValueChanged, AddressOf NumInterval_ValueChanged
 
-        Dim lblMins As New Label() With {.Text = "minutes", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True, .Location = New Point(275, 60)}
+        Dim lblMins As New Label() With {.Text = "minutes", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True}
 
-        Dim chkDark = New CheckBox() With {.Text = "Dark Mode", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True, .Location = New Point(360, 60)}
+        Dim chkDark As CheckBox = New CheckBox() With {.Name = "chkDark", .Text = "Dark Mode", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True}
         AddHandler chkDark.CheckedChanged, AddressOf ChkDark_CheckedChanged
 
         ' THE MISSING CHECKBOX
-        chkStartup = New CheckBox() With {.Text = "Run at Startup", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True, .Location = New Point(470, 60)}
+        chkStartup = New CheckBox() With {.Name = "chkStartup", .Text = "Run at Startup", .Font = primaryFont, .ForeColor = labelFore, .AutoSize = True}
         AddHandler chkStartup.CheckedChanged, AddressOf ChkStartup_CheckedChanged
 
-        ' Row 2: Status Labels
-        lblCountdown = New Label() With {.Text = "Periodic updates disabled", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore, .Location = New Point(20, 95)}
-        lblLastRunStatus = New Label() With {.Text = "Last run: never", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore, .Location = New Point(300, 95)}
+        Dim pnlTopRow As New FlowLayoutPanel() With {
+            .Name = "pnlTopRow",
+            .AutoSize = False,
+            .Height = 36,
+            .Width = 560,
+            .FlowDirection = FlowDirection.LeftToRight,
+            .WrapContents = True,
+            .Location = New Point(20, 60),
+            .Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right,
+            .Padding = New Padding(0)
+        }
 
-        ' Row 3: IP Status Labels
-        lblDetectedIp = New Label() With {.Text = "My Public IP: Detecting...", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore, .Location = New Point(20, 125)}
-        lblDomainIp = New Label() With {.Text = "DNS points to: Unknown", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore, .Location = New Point(300, 125)}
+        ' Give child controls a small margin so they don't touch
+        chkEnableTimer.Margin = New Padding(0, 6, 12, 0)
+        numInterval.Margin = New Padding(0, 4, 6, 0)
+        lblMins.Margin = New Padding(0, 8, 12, 0)
+        chkDark.Margin = New Padding(0, 6, 12, 0)
+        chkStartup.Margin = New Padding(0, 6, 12, 0)
 
-        ' Row 4-6: Inputs (Nudged down to fit IP labels)
-        txtHost = New TextBox() With {.Name = "txtHost", .Font = primaryFont, .BackColor = inputBack, .ForeColor = inputFore, .BorderStyle = BorderStyle.FixedSingle, .Location = New Point(100, 165), .Width = 400, .Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right}
-        txtDomain = New TextBox() With {.Name = "txtDomain", .Font = primaryFont, .BackColor = inputBack, .ForeColor = inputFore, .BorderStyle = BorderStyle.FixedSingle, .Location = New Point(100, 200), .Width = 400, .Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right}
-        txtPassword = New TextBox() With {.Name = "txtPassword", .Font = primaryFont, .BackColor = inputBack, .ForeColor = inputFore, .BorderStyle = BorderStyle.FixedSingle, .UseSystemPasswordChar = True, .Location = New Point(100, 235), .Width = 400, .Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right}
+        pnlTopRow.Controls.AddRange(New Control() {chkEnableTimer, numInterval, lblMins, chkDark, chkStartup})
 
-        ' Row 7: Buttons
-        btnAddDomain = New Button() With {.Text = "Save Record", .Font = primaryFont, .BackColor = btnBack, .ForeColor = btnFore, .FlatStyle = FlatStyle.Flat, .Size = New Size(100, 32), .Location = New Point(100, 275)}
+        ' Row 2: Status and IP labels
+        lblCountdown = New Label() With {.Text = "Periodic updates disabled", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore}
+        lblLastRunStatus = New Label() With {.Text = "Last run: never", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore}
+
+        lblDetectedIp = New Label() With {.Text = "My Public IP: Detecting...", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore}
+        lblDomainIp = New Label() With {.Text = "DNS points to: Unknown", .Font = primaryFont, .AutoSize = True, .ForeColor = labelFore}
+
+        Dim statusPanel As New FlowLayoutPanel() With {.AutoSize = True, .FlowDirection = FlowDirection.LeftToRight}
+        statusPanel.Controls.AddRange(New Control() {lblCountdown, lblLastRunStatus})
+
+        Dim ipPanel As New FlowLayoutPanel() With {.AutoSize = True, .FlowDirection = FlowDirection.LeftToRight}
+        ipPanel.Controls.AddRange(New Control() {lblDetectedIp, lblDomainIp})
+
+        ' Row 4-6: Inputs (use TableLayoutPanel for consistent alignment)
+        ' Use a fixed width for inputs so they don't expand under the log pane
+        Dim inputWidth As Integer = 420
+        txtHost = New TextBox() With {.Name = "txtHost", .Font = primaryFont, .BackColor = inputBack, .ForeColor = inputFore, .BorderStyle = BorderStyle.FixedSingle, .Width = inputWidth}
+        txtDomain = New TextBox() With {.Name = "txtDomain", .Font = primaryFont, .BackColor = inputBack, .ForeColor = inputFore, .BorderStyle = BorderStyle.FixedSingle, .Width = inputWidth}
+        txtPassword = New TextBox() With {.Name = "txtPassword", .Font = primaryFont, .BackColor = inputBack, .ForeColor = inputFore, .BorderStyle = BorderStyle.FixedSingle, .UseSystemPasswordChar = True, .Width = inputWidth}
+
+        Dim inputsPanel As New TableLayoutPanel() With {.AutoSize = True, .Dock = DockStyle.Top, .ColumnCount = 2}
+        inputsPanel.ColumnStyles.Add(New ColumnStyle(SizeType.AutoSize))
+        inputsPanel.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, inputWidth))
+        inputsPanel.RowCount = 3
+        inputsPanel.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        inputsPanel.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        inputsPanel.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        inputsPanel.Controls.Add(New Label() With {.Text = "Host:", .AutoSize = True}, 0, 0)
+        inputsPanel.Controls.Add(txtHost, 1, 0)
+        inputsPanel.Controls.Add(New Label() With {.Text = "Domain:", .AutoSize = True}, 0, 1)
+        inputsPanel.Controls.Add(txtDomain, 1, 1)
+        inputsPanel.Controls.Add(New Label() With {.Text = "Password:", .AutoSize = True}, 0, 2)
+        inputsPanel.Controls.Add(txtPassword, 1, 2)
+
+        ' Row 7: Buttons - placed in a FlowLayoutPanel for consistent spacing and layout
+        btnAddDomain = New Button() With {.Text = "Save", .Font = primaryFont, .BackColor = btnBack, .ForeColor = btnFore, .FlatStyle = FlatStyle.Flat, .Size = New Size(100, 36)}
         AddHandler btnAddDomain.Click, AddressOf BtnAddDomain_Click
 
-        btnManualUpdate = New Button() With {.Text = "Manual Update", .Font = primaryFont, .BackColor = Color.FromArgb(70, 70, 74), .ForeColor = btnFore, .FlatStyle = FlatStyle.Flat, .Size = New Size(120, 32), .Location = New Point(210, 275)}
+        btnManualUpdate = New Button() With {.Text = "Manual", .Font = primaryFont, .BackColor = Color.FromArgb(70, 70, 74), .ForeColor = btnFore, .FlatStyle = FlatStyle.Flat, .Size = New Size(100, 36)}
         AddHandler btnManualUpdate.Click, AddressOf BtnManualUpdate_Click
 
-        btnUpdateRecord = New Button() With {.Text = "Update Selected", .Font = primaryFont, .BackColor = Color.FromArgb(70, 70, 74), .ForeColor = btnFore, .FlatStyle = FlatStyle.Flat, .Size = New Size(120, 32), .Location = New Point(340, 275)}
+        btnUpdateRecord = New Button() With {.Text = "Update", .Font = primaryFont, .BackColor = Color.FromArgb(70, 70, 74), .ForeColor = btnFore, .FlatStyle = FlatStyle.Flat, .Size = New Size(100, 36)}
         AddHandler btnUpdateRecord.Click, AddressOf BtnUpdateRecord_Click
 
-        btnDeleteRecord = New Button() With {.Text = "Delete Selected", .Font = primaryFont, .BackColor = Color.FromArgb(180, 60, 60), .ForeColor = Color.White, .FlatStyle = FlatStyle.Flat, .Size = New Size(120, 32), .Location = New Point(470, 275)}
+        btnDeleteRecord = New Button() With {.Text = "Delete", .Font = primaryFont, .BackColor = Color.FromArgb(180, 60, 60), .ForeColor = Color.White, .FlatStyle = FlatStyle.Flat, .Size = New Size(100, 36)}
         AddHandler btnDeleteRecord.Click, AddressOf BtnDeleteRecord_Click
 
-        ' Grid
-        dgvRecords = New DataGridView() With {.Name = "dgvRecords", .Font = primaryFont, .AllowUserToAddRows = False, .SelectionMode = DataGridViewSelectionMode.FullRowSelect, .RowHeadersVisible = False, .BorderStyle = BorderStyle.None, .BackgroundColor = Color.FromArgb(30, 30, 30), .GridColor = Color.FromArgb(60, 60, 60), .EnableHeadersVisualStyles = False, .Location = New Point(20, 325), .Size = New Size(550, 280), .Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right}
+        Dim pnlButtons As New FlowLayoutPanel() With {.AutoSize = True, .FlowDirection = FlowDirection.LeftToRight, .Anchor = AnchorStyles.Left Or AnchorStyles.Top, .Dock = DockStyle.Top}
+        pnlButtons.Controls.AddRange(New Control() {btnAddDomain, btnManualUpdate, btnUpdateRecord, btnDeleteRecord})
+
+        ' Grid (anchor to left/top/bottom and use fixed width so it doesn't grow under the log)
+        dgvRecords = New DataGridView() With {.Name = "dgvRecords", .Font = primaryFont, .AllowUserToAddRows = False, .SelectionMode = DataGridViewSelectionMode.FullRowSelect, .RowHeadersVisible = False, .BorderStyle = BorderStyle.None, .BackgroundColor = Color.FromArgb(30, 30, 30), .GridColor = Color.FromArgb(60, 60, 60), .EnableHeadersVisualStyles = False, .Dock = DockStyle.Fill, .MinimumSize = New Size(400, 200), .ScrollBars = ScrollBars.Both, .AllowUserToResizeColumns = True, .AllowUserToOrderColumns = True}
         dgvRecords.ColumnHeadersDefaultCellStyle = New DataGridViewCellStyle() With {.BackColor = Color.FromArgb(45, 45, 48), .ForeColor = Color.White, .Font = New Font(primaryFont.FontFamily, primaryFont.Size, FontStyle.Bold)}
         dgvRecords.DefaultCellStyle = New DataGridViewCellStyle() With {.BackColor = Color.FromArgb(45, 45, 48), .ForeColor = Color.White, .SelectionBackColor = Color.FromArgb(70, 70, 74), .SelectionForeColor = Color.White}
         dgvRecords.AlternatingRowsDefaultCellStyle = New DataGridViewCellStyle() With {.BackColor = Color.FromArgb(37, 37, 38), .ForeColor = Color.White}
+        ' Disable automatic fill so we can control column widths and keep all columns visible
+        dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
         AddHandler dgvRecords.SelectionChanged, AddressOf DgvRecords_SelectionChanged
 
-        ' Add everything to the screen
-        Controls.Add(rtbLog)
+        ' Main layout to prevent overlap: rows for title, top row, status, ip, inputs, buttons and the grid filling remaining space
+        Dim tblMain As New TableLayoutPanel() With {.Dock = DockStyle.Fill, .ColumnCount = 1, .Padding = New Padding(0)}
+        tblMain.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 100))
+        ' Add an extra spacer row (50px) between buttons and grid to prevent overlap
+        tblMain.RowCount = 8
+        tblMain.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        tblMain.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        tblMain.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        tblMain.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        tblMain.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        tblMain.RowStyles.Add(New RowStyle(SizeType.AutoSize))
+        tblMain.RowStyles.Add(New RowStyle(SizeType.Absolute, 50))
+        tblMain.RowStyles.Add(New RowStyle(SizeType.Percent, 100))
+        tblMain.Controls.Add(lblTitle, 0, 0)
+        tblMain.Controls.Add(pnlTopRow, 0, 1)
+        tblMain.Controls.Add(statusPanel, 0, 2)
+        tblMain.Controls.Add(ipPanel, 0, 3)
+        tblMain.Controls.Add(inputsPanel, 0, 4)
+        tblMain.Controls.Add(pnlButtons, 0, 5)
+        ' row 6 is spacer
+        tblMain.Controls.Add(dgvRecords, 0, 7)
+
+        ' Add tblMain into pnlLeft
+        pnlLeft.Controls.Add(tblMain)
+        ' Make sure pnlLeft can scroll if window is narrow; keep left area width fixed
+        pnlLeft.AutoScrollMinSize = New Size(760, 400)
+        inputsPanel.Margin = New Padding(0, 6, 0, 6)
+        pnlButtons.Margin = New Padding(0, 6, 0, 6)
+
+        ' Add everything to the screen (add left panel first, then docked log to ensure correct layout)
         Controls.Add(pnlLeft)
-        pnlLeft.Controls.AddRange(New Control() {lblTitle, chkEnableTimer, numInterval, lblMins, chkDark, chkStartup, lblCountdown, lblLastRunStatus, lblDetectedIp, lblDomainIp, DirectCast(New Label() With {.Text = "Host:", .AutoSize = True, .Location = New Point(20, 167)}, Label), txtHost, DirectCast(New Label() With {.Text = "Domain:", .AutoSize = True, .Location = New Point(20, 202)}, Label), txtDomain, DirectCast(New Label() With {.Text = "Password:", .AutoSize = True, .Location = New Point(20, 237)}, Label), txtPassword, btnAddDomain, btnManualUpdate, btnUpdateRecord, btnDeleteRecord, dgvRecords})
+        Controls.Add(rtbLog)
+        ' Do not change z-order here (BringToFront) because that can cause the log to overlay
+        ' the left panel and hide part of the grid. Docking will place controls correctly.
 
         uiConfig = LoadUiConfig()
-        chkDark.Checked = uiConfig.IsDarkMode
+        ' Ensure UI controls reflect saved config
+        Dim darkCtl = pnlTopRow.Controls.OfType(Of CheckBox)().FirstOrDefault(Function(c) c.Name = "chkDark")
+        If darkCtl IsNot Nothing Then darkCtl.Checked = uiConfig.IsDarkMode
         If chkStartup IsNot Nothing Then chkStartup.Checked = uiConfig.RunAtStartup
         ApplyTheme(uiConfig)
     End Sub
@@ -155,14 +235,59 @@ Public Class Main_Form1
         If records Is Nothing Then records = New System.ComponentModel.BindingList(Of NamecheapRecord)()
         dgvRecords.DataSource = Nothing
         dgvRecords.AutoGenerateColumns = False
+        ' Recreate columns explicitly each time to avoid any stale/hidden columns
         dgvRecords.Columns.Clear()
-        dgvRecords.Columns.AddRange(New DataGridViewColumn() {
-            New DataGridViewTextBoxColumn() With {.Name = "Host", .DataPropertyName = "Host", .HeaderText = "Host", .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells},
-            New DataGridViewTextBoxColumn() With {.Name = "Domain", .DataPropertyName = "Domain", .HeaderText = "Domain", .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill, .MinimumWidth = 100},
-            New DataGridViewTextBoxColumn() With {.Name = "LastStatus", .DataPropertyName = "LastStatus", .HeaderText = "Last Status", .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells, .MinimumWidth = 100},
-            New DataGridViewTextBoxColumn() With {.Name = "LastUpdated", .DataPropertyName = "LastUpdated", .HeaderText = "Last Updated", .AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells}
-        })
+
+        ' Create four columns (Host, Domain, Last Status, Last Updated) and use Fill mode
+        ' with relative FillWeight so the table appears as a single coherent grid.
+        Dim colHost = New DataGridViewTextBoxColumn() With {
+            .Name = "Host",
+            .DataPropertyName = "Host",
+            .HeaderText = "Host",
+            .MinimumWidth = 60,
+            .Visible = True,
+            .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+            .FillWeight = 15
+        }
+        Dim colDomain = New DataGridViewTextBoxColumn() With {
+            .Name = "Domain",
+            .DataPropertyName = "Domain",
+            .HeaderText = "Domain",
+            .MinimumWidth = 200,
+            .Visible = True,
+            .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+            .FillWeight = 25
+        }
+        Dim colStatus = New DataGridViewTextBoxColumn() With {
+            .Name = "LastStatus",
+            .DataPropertyName = "LastStatus",
+            .HeaderText = "Last Status",
+            .MinimumWidth = 140,
+            .Visible = True,
+            .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+            .FillWeight = 20
+        }
+        Dim colUpdated = New DataGridViewTextBoxColumn() With {
+            .Name = "LastUpdated",
+            .DataPropertyName = "LastUpdated",
+            .HeaderText = "Last Updated",
+            .MinimumWidth = 120,
+            .Visible = True,
+            .AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+            .FillWeight = 20
+        }
+
+        dgvRecords.Columns.AddRange(New DataGridViewColumn() {colHost, colDomain, colStatus, colUpdated})
+
+        ' Prefer AllCells for sizing so columns fit their contents and visible area without forcing
+        ' a horizontal scroll. Allow Fill as fallback when container is resized smaller.
+        dgvRecords.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+        dgvRecords.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvRecords.ColumnHeadersVisible = True
         dgvRecords.DataSource = records
+
+        ' After binding, ensure the grid will show a horizontal scrollbar when necessary
+        dgvRecords.ScrollBars = ScrollBars.Both
     End Sub
 
     ' --- HANDLERS ---
@@ -363,21 +488,8 @@ Public Class Main_Form1
             rtbLog.BackColor = If(cfg.IsDarkMode, Color.Black, Color.White)
             rtbLog.ForeColor = If(cfg.IsDarkMode, Color.Lime, Color.DarkGreen)
 
-            For Each ctrl As Control In Me.Controls
-                If ctrl.HasChildren Then
-                    ctrl.BackColor = back : ctrl.ForeColor = fore
-                    For Each child As Control In ctrl.Controls
-                        ' This handles all Labels, Checkboxes (including chkStartup), and Textboxes
-                        If TypeOf child Is Label OrElse TypeOf child Is CheckBox Then
-                            child.ForeColor = fore
-                            child.BackColor = Color.Transparent
-                        ElseIf TypeOf child Is TextBox Then
-                            child.BackColor = If(cfg.IsDarkMode, Color.FromArgb(30, 30, 30), Color.White)
-                            child.ForeColor = fore
-                        End If
-                    Next
-                End If
-            Next
+            ' Recursively apply theme to all nested controls so FlowLayoutPanel children are handled
+            ApplyThemeToControl(Me, back, fore, cfg)
 
             ' Specific chkStartup check just in case it wasn't in a panel (though it is now)
             If chkStartup IsNot Nothing Then
@@ -392,7 +504,29 @@ Public Class Main_Form1
                 dgvRecords.EnableHeadersVisualStyles = False
             End If
 
-            ' DELETED THE ERRANT "If TypeOf child..." BLOCK FROM HERE
+        Catch : End Try
+    End Sub
+
+    Private Sub ApplyThemeToControl(ctrl As Control, back As Color, fore As Color, cfg As UIConfig)
+        Try
+            ctrl.BackColor = back
+            ctrl.ForeColor = fore
+            For Each child As Control In ctrl.Controls
+                If TypeOf child Is Label OrElse TypeOf child Is CheckBox Then
+                    child.ForeColor = fore
+                    child.BackColor = Color.Transparent
+                ElseIf TypeOf child Is TextBox Then
+                    child.BackColor = If(cfg.IsDarkMode, Color.FromArgb(30, 30, 30), Color.White)
+                    child.ForeColor = fore
+                ElseIf TypeOf child Is Button Then
+                    child.BackColor = If(cfg.IsDarkMode, Color.FromArgb(45, 45, 48), Color.LightGray)
+                    child.ForeColor = fore
+                    child.Margin = New Padding(4)
+                Else
+                    ' For container controls (Panel, FlowLayoutPanel, TableLayoutPanel, etc), recurse
+                    ApplyThemeToControl(child, back, fore, cfg)
+                End If
+            Next
         Catch : End Try
     End Sub
 
@@ -523,7 +657,7 @@ Public Class Main_Form1
     Private Async Function GetPublicIpAsync() As Task(Of String)
         Try
             Using client As New HttpClient()
-                Dim ip = Await client.GetStringAsync("https://icanhazip.com")
+                Dim ip = Await client.GetStringAsync("https://ipv4.icanhazip.com") ' We need IPV4 specifically because Namecheap doesn't support IPv6 for DDNS.
                 Return ip.Trim()
             End Using
         Catch : Return String.Empty : End Try

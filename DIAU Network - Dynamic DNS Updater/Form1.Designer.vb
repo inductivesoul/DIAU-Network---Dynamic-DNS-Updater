@@ -27,14 +27,16 @@ Partial Class Main_Form1
         ' 
         ' Main_Form1
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.Black
-        ClientSize = New Size(1008, 621)
+        ClientSize = New Size(1024, 768)
         ForeColor = Color.White
         Icon = CType(resources.GetObject("$this.Icon"), Icon)
+        Margin = New Padding(4, 5, 4, 5)
         Name = "Main_Form1"
         Text = "DIAU Network - Dynamic DNS Updater"
+        Me.MinimumSize = New Size(1024, 768)
         ResumeLayout(False)
     End Sub
 
